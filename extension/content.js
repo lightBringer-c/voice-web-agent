@@ -1,27 +1,30 @@
-console.log("Voice Agent Loaded");
+console.log("CONTENT SCRIPT RUNNING");
 
-chrome.runtime.onMessage.addListener(function(request){
+let voiceLoaded = false;
 
- const command = request.command;
+chrome.runtime.onMessage.addListener(async (msg)=>{
 
- if(!command) return;
+ if(msg.command === "start"){
 
- if(command.includes("scroll down")){
+  if(!voiceLoaded){
 
-  window.scrollBy({
-   top:500,
-   behavior:"smooth"
-  })
+   const script = document.createElement("script")
+   script.src = chrome.runtime.getURL("voice.js")
 
- }
+   document.body.appendChild(script)
 
- if(command.includes("scroll up")){
+   voiceLoaded = true
 
-  window.scrollBy({
-   top:-500,
-   behavior:"smooth"
-  })
+  }
+
+  window.postMessage({type:"VOICE_START"})
 
  }
 
-});
+ if(msg.command === "stop"){
+
+  window.postMessage({type:"VOICE_STOP"})
+
+ }
+
+})

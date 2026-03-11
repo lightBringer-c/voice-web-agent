@@ -1,54 +1,72 @@
-console.log("Voice background ready");
+console.log("VOICE SCRIPT LOADED");
 
-chrome.runtime.onMessage.addListener((request) => {
+let recognition = null;
 
-    if (request.action === "startVoice") {
+window.addEventListener("message",(event)=>{
 
-        startVoice();
+ if(event.data.type === "VOICE_START"){
 
-    }
+  startVoice()
 
-});
+ }
+
+ if(event.data.type === "VOICE_STOP"){
+
+  stopVoice()
+
+ }
+
+})
 
 function startVoice(){
 
-    const SpeechRecognition =
-        self.SpeechRecognition || self.webkitSpeechRecognition;
+ if(recognition){
+  console.log("Voice already running")
+  return
+ }
 
-    const recognition = new SpeechRecognition();
+ const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition
 
-    recognition.lang = "en-US";
-    recognition.continuous = true;
+ recognition = new SpeechRecognition()
 
-    recognition.onresult = function(event){
+ recognition.lang = "en-US"
+ recognition.continuous = true
 
-        const command =
-          event.results[event.results.length - 1][0].transcript.toLowerCase();
+ recognition.start()
 
-        console.log("Command:",command);
+ console.log("Voice started")
 
-        if(command.includes("scroll down")){
-            sendAction("scrollDown")
-        }
+ recognition.onresult = (event)=>{
 
-        if(command.includes("scroll up")){
-            sendAction("scrollUp")
-        }
+  const command =
+   event.results[event.results.length-1][0].transcript.toLowerCase()
 
-    }
+  console.log("Voice command:",command)
 
-    recognition.start()
+  if(command.includes("scroll down")){
+   window.scrollBy({top:500,behavior:"smooth"})
+  }
+
+  if(command.includes("scroll up")){
+   window.scrollBy({top:-500,behavior:"smooth"})
+  }
+
+ }
+
+ recognition.onend = ()=>{
+  console.log("Voice ended")
+  recognition = null
+ }
 
 }
 
-function sendAction(action){
+function stopVoice(){
 
-    chrome.tabs.query({active:true,currentWindow:true},function(tabs){
-
-        chrome.tabs.sendMessage(tabs[0].id,{
-            action:action
-        })
-
-    })
+ if(recognition){
+  recognition.stop()
+  recognition = null
+  console.log("Voice stopped")
+ }
 
 }

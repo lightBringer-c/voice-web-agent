@@ -3,15 +3,8 @@
   "name": "Voice Web Agent",
   "version": "1.0",
   "description": "Voice assistant for web navigation",
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "tabs"
-  ],
+  "permissions": ["activeTab","scripting"],
   "host_permissions": ["<all_urls>"],
-  "background": {
-    "service_worker": "voice.js"
-  },
   "action": {
     "default_popup": "popup.html"
   },

@@ -1,23 +1,27 @@
-console.log("Voice Web Agent loaded");
+console.log("Voice Agent Loaded");
 
-chrome.runtime.onMessage.addListener((request)=>{
+chrome.runtime.onMessage.addListener(function(request){
 
-    if(request.action==="scrollDown"){
+ const command = request.command;
 
-        window.scrollBy({
-            top:500,
-            behavior:"smooth"
-        })
+ if(!command) return;
 
-    }
+ if(command.includes("scroll down")){
 
-    if(request.action==="scrollUp"){
+  window.scrollBy({
+   top:500,
+   behavior:"smooth"
+  })
 
-        window.scrollBy({
-            top:-500,
-            behavior:"smooth"
-        })
+ }
 
-    }
+ if(command.includes("scroll up")){
 
-})
+  window.scrollBy({
+   top:-500,
+   behavior:"smooth"
+  })
+
+ }
+
+});
